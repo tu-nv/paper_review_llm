@@ -1,0 +1,6 @@
+ollama
+streamlit
+torch
+pymupdf
+pymupdf4llm
+marker-pdf

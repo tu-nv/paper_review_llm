@@ -1,60 +1,53 @@
-from ollama import Client
+
 import streamlit as st
-import torch
-import argparse
-import pymupdf, pymupdf4llm
-import pathlib
-from pdf2docx import Converter
 from tempfile import NamedTemporaryFile
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Process a boolean flag.")
-    parser.add_argument('-o', '--ollama-server-url', type=str, default="http://141.223.124.22:11440", help='ollama server url')
-    return parser.parse_args()
-
-args = parse_args()
-print(f"Run with args: {args}")
-
-ollama_client = Client(host=args.ollama_server_url , timeout=60)
-
-st.title("Paper review assistant")
+from utils import paper_to_markdown, model_res_generator, SYSTEM_PROMPT
 
 # initialize history
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
 
-# init models
-if "model" not in st.session_state:
-    st.session_state["model"] = ""
+def reset_if_new_file_uploaded():
+    st.session_state["messages"] = []
 
-models = [model["name"] for model in ollama_client.list()["models"]]
-st.session_state["model"] = st.selectbox("Choose your model", models)
+# init variables
+md_text = None
+init_review_message = None
 
-def model_res_generator():
-    stream = ollama_client.chat(
-        model=st.session_state["model"],
-        messages=st.session_state["messages"],
-        stream=True,
-    )
-    for chunk in stream:
-        yield chunk["message"]["content"]
+st.title("Paper review assistant")
 
+uploaded_file = st.file_uploader("Upload a pdf file",
+                                 type=["pdf"],
+                                 on_change=reset_if_new_file_uploaded)
 
-uploaded_file = st.file_uploader("Upload a pdf file", type=["pdf"])
 if uploaded_file is not None:
     with NamedTemporaryFile(dir='.', suffix='.pdf') as paper:
         paper.write(uploaded_file.getbuffer())
-        md_text = pymupdf4llm.to_markdown(paper.name, margins=(30, 40, 30, 40), dpi=300)
+        md_text = paper_to_markdown(paper.name)
 
-        with st.popover("Show paper", use_container_width=False, disabled=False):
+        with st.popover("Show paper", disabled=False):
             with st.container(height=600):
                 st.write(md_text)
 
+        if st.session_state["messages"] == []:
+            st.session_state["messages"].extend(
+                        [{'role': 'system', 'content': SYSTEM_PROMPT},
+                        {'role': 'user', 'content': md_text}])
+            with st.chat_message("assistant"):
+                init_review_message = st.write_stream(model_res_generator(st.session_state["messages"]))
+
+
 # Display chat messages from history on app rerun
-for message in st.session_state["messages"]:
+for idx, message in enumerate(st.session_state["messages"]):
+    # do not display first two messages which is for initial review
+    if idx < 2:
+        continue
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
-
+# add initial review message after display chat messages from history, otherwise it will be displayed twice
+if init_review_message:
+    st.session_state["messages"].append({"role": "assistant", "content": init_review_message})
+# continue chat
 if prompt := st.chat_input("Enter prompt here.."):
     # add latest message to history in format {role, content}
     st.session_state["messages"].append({"role": "user", "content": prompt})
@@ -63,5 +56,5 @@ if prompt := st.chat_input("Enter prompt here.."):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        message = st.write_stream(model_res_generator())
+        message = st.write_stream(model_res_generator(st.session_state["messages"]))
         st.session_state["messages"].append({"role": "assistant", "content": message})
