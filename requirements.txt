@@ -3,4 +3,8 @@ streamlit
 torch
 pymupdf
 pymupdf4llm
-marker-pdf
+beautifulsoup4
+xformers<0.0.27
+trl
+peft
+datasets==2.21.0
