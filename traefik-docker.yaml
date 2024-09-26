@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:v2.11.10
+    container_name: traefik
+    network_mode: host
+    command:
+      - "--api.insecure=true"
+      - "--providers.file.filename=/etc/traefik/dynamic.yaml"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.ollama.address=localhost:11450"
+      - "--entrypoints.websecure.address=:443"
+      # - "--log.level=DEBUG"
+    volumes:
+      # - "./traefik.yml:/etc/traefik/traefik.yml"
+      - "./traefik-dynamic.yaml:/etc/traefik/dynamic.yaml"

@@ -5,12 +5,12 @@ from tempfile import NamedTemporaryFile
 from utils import paper_to_markdown_noms, model_res_generator, SYSTEM_REVIEWER_PROMPT
 
 st.set_page_config(
-    page_title="Paper Review Assistant",
+    page_title="Paper Review Assistant NOMS 2025",
     page_icon="📝",
     # layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
-        'About': "Paper review assistant using OLLAMA model",
+        'About': "Paper review assistant for NOMS 2025",
     }
 )
 
@@ -53,7 +53,7 @@ md_text = None
 init_review_messages = None
 
 st.title("Paper review assistant")
-
+st.warning("This is a beta version of the paper review assistant for NOMS 2025 based on LLM. The system may not provide accurate results. Please only use the output as a suggestion.")
 
 uploaded_file = st.file_uploader("Upload a pdf file",
                                  type=["pdf"],
@@ -96,6 +96,9 @@ if init_review_messages:
 
 # continue chat
 if prompt := st.chat_input("Enter prompt here.."):
+    if uploaded_file is None:
+        st.warning("Please upload a pdf file first.")
+        st.stop()
     # add latest message to history in format {role, content}
     st.session_state["messages"].append({"role": "user", "content": prompt})
 

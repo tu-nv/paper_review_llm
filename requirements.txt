@@ -1,8 +1,7 @@
 ollama
 streamlit
-torch
 pymupdf
-pymupdf4llm
+torch
 beautifulsoup4
 xformers<0.0.27
 trl

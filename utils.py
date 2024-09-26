@@ -6,8 +6,8 @@ from pdf2docx import Converter
 
 
 
-OLLAMA_SERVER_URL="http://141.223.124.22:11440"
-OLLAMA_MODEL="llama3.1:70b"
+OLLAMA_SERVER_URL="http://localhost:11450"
+OLLAMA_MODEL="llama3.1:8b"
 # OLLAMA_MODEL="mistral-large"
 ollama_options= {
                     'temperature': 0.2,
