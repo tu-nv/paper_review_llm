@@ -53,7 +53,7 @@ md_text = None
 init_review_messages = None
 
 st.title("Paper review assistant")
-
+st.warning("This is a beta version of the paper review assistant for NOMS 2025 based on LLM. The system may not provide accurate results. Please only use the output as a suggestion.")
 
 uploaded_file = st.file_uploader("Upload a pdf file",
                                  type=["pdf"],
@@ -96,6 +96,9 @@ if init_review_messages:
 
 # continue chat
 if prompt := st.chat_input("Enter prompt here.."):
+    if uploaded_file is None:
+        st.warning("Please upload a pdf file first.")
+        st.stop()
     # add latest message to history in format {role, content}
     st.session_state["messages"].append({"role": "user", "content": prompt})
 
