@@ -1,0 +1,45 @@
+http:
+  routers:
+    streamlit-router:
+      rule: "PathPrefix(`/`)"
+      service: streamlit
+      entryPoints:
+        - web
+        - websecure
+      middlewares:
+        - streamlit-rate-limit
+
+    ollama-router:
+      rule: "Host(`localhost`)"
+      service: ollama
+      entryPoints:
+        - ollama
+      middlewares:
+        - ollama-retry
+
+  middlewares:
+    streamlit-rate-limit:
+      rateLimit:
+        average: 5
+        burst: 10
+    # retry to the next server (depend on load balacing algorithm) if the current one fails
+    ollama-retry:
+      retry:
+        attempts: 3
+        initialInterval: "400ms"  # Optional: Delay between retries
+
+  services:
+    streamlit:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:8501"
+
+    ollama:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:11440"
+          - url: "http://localhost:11441"
+        healthCheck:
+          path: "/"
+          interval: "10s"
+          timeout: "2s"

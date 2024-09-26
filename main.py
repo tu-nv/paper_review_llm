@@ -5,12 +5,12 @@ from tempfile import NamedTemporaryFile
 from utils import paper_to_markdown_noms, model_res_generator, SYSTEM_REVIEWER_PROMPT
 
 st.set_page_config(
-    page_title="Paper Review Assistant",
+    page_title="Paper Review Assistant NOMS 2025",
     page_icon="📝",
     # layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
-        'About': "Paper review assistant using OLLAMA model",
+        'About': "Paper review assistant for NOMS 2025",
     }
 )
 
