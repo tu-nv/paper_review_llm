@@ -1,45 +1,20 @@
 
 import streamlit as st
+from database import db
 import hmac
+import copy
 from tempfile import NamedTemporaryFile
-from utils import paper_to_markdown_noms, model_res_generator, SYSTEM_REVIEWER_PROMPT
+from utils import paper_to_markdown_noms, model_res_generator, full_response_generator, SYSTEM_REVIEWER_PROMPT
 
 st.set_page_config(
     page_title="Paper Review Assistant NOMS 2025",
     page_icon="📝",
     # layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
     menu_items={
         'About': "Paper review assistant for NOMS 2025",
     }
 )
-
-# def check_password():
-#     """Returns `True` if the user had the correct password."""
-
-#     def password_entered():
-#         """Checks whether a password entered by the user is correct."""
-#         if hmac.compare_digest(st.session_state["password"], st.secrets["password"]):
-#             st.session_state["password_correct"] = True
-#             del st.session_state["password"]  # Don't store the password.
-#         else:
-#             st.session_state["password_correct"] = False
-
-#     # Return True if the password is validated.
-#     if st.session_state.get("password_correct", False):
-#         return True
-
-#     # Show input for password.
-#     st.text_input(
-#         "Password", type="password", on_change=password_entered, key="password"
-#     )
-#     if "password_correct" in st.session_state:
-#         st.error("Password incorrect")
-#     return False
-
-# if not check_password():
-#     st.stop()  # Do not continue if check_password is not True.
-
 
 # initialize history
 if "messages" not in st.session_state:
@@ -55,7 +30,7 @@ init_review_messages = None
 st.title("Paper review assistant")
 st.warning("This is a beta version of the paper review assistant for NOMS 2025 based on LLM. The system may not provide accurate results. Please only use the output as a suggestion.")
 
-uploaded_file = st.file_uploader("Upload a pdf file",
+uploaded_file = st.file_uploader("Upload a paper to start reviewing",
                                  type=["pdf"],
                                  on_change=reset_if_new_file_uploaded)
 
@@ -68,24 +43,29 @@ if uploaded_file is not None:
             st.markdown(md_text)
 
         if st.session_state["messages"] == []:
-            init_review_messages = [
-                            {'role': 'system', 'content': SYSTEM_REVIEWER_PROMPT},
-                            {'role': 'user', 'content': md_text}
-                        ]
-            with st.chat_message("assistant"):
-                reply = st.write_stream(model_res_generator(init_review_messages))
-                init_review_messages.append({'role': 'assistant', 'content': reply})
+            paper_review = db.get_paper_review(md_text)
+            if paper_review:
+                # if not deepcopy, the original paper_review will be updated, and stored in db (cache, although not db.json yet)
+                # which can cause unwanted behavior
+                st.session_state["messages"] = copy.deepcopy(paper_review["review"])
+            else:
+                init_review_messages = [
+                                {'role': 'system', 'content': SYSTEM_REVIEWER_PROMPT},
+                                {'role': 'user', 'content': md_text}
+                            ]
+                with st.chat_message("assistant"):
+                    reply = st.write_stream(model_res_generator(init_review_messages))
+                    init_review_messages.append({'role': 'assistant', 'content': reply})
 
-            init_review_messages.append(
-                        {'role': 'user', 'content': " Give a list errors in english writing of the paper, if any."})
-            with st.chat_message("assistant"):
-                reply = st.write_stream(model_res_generator(init_review_messages))
-                init_review_messages.append({'role': 'assistant', 'content': reply})
-
+                init_review_messages.append(
+                            {'role': 'user', 'content': " Give a list errors in english writing of the paper, if any."})
+                with st.chat_message("assistant"):
+                    reply = st.write_stream(model_res_generator(init_review_messages))
+                    init_review_messages.append({'role': 'assistant', 'content': reply})
 
 # Display chat messages from history on app rerun
 for idx, message in enumerate(st.session_state["messages"]):
-    # do not display first two messages which is for initial review
+    # do not display first two query messages which is for initial review
     if idx in [0, 1, 3]:
         continue
     with st.chat_message(message["role"]):

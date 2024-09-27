@@ -76,15 +76,18 @@ def model_res_generator(messages):
     for chunk in stream:
         yield chunk["message"]["content"]
 
-def initial_review(input_text):
+def full_response_generator(messages):
     full_response = ""
-    messages = [{'role': 'system', 'content': SYSTEM_REVIEWER_PROMPT},
-                {'role': 'user', 'content': input_text}]
-
     for chunk in model_res_generator(messages):
         full_response += chunk
 
     return full_response
+
+def initial_review(input_text):
+    messages = [{'role': 'system', 'content': SYSTEM_REVIEWER_PROMPT},
+                {'role': 'user', 'content': input_text}]
+
+    return full_response_generator(messages)
 
 # for noms
 def paper_to_markdown_noms(pdf_path):

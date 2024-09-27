@@ -166,3 +166,4 @@ _unsloth_temporary_saved_buffers/
 llama.cpp/
 model/
 _unsloth_sentencepiece_temp/
+.vscode
