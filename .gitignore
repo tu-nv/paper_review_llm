@@ -166,3 +166,7 @@ llama.cpp/
 model/
 _unsloth_sentencepiece_temp/
 .vscode
+ws/data/ieeecryptoex23-papers/
+ws/data/ieeecryptoex24-papers/
+ws/data/ieeeicbc23-papers/
+ws/data/ieeeicbc24-papers/
