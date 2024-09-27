@@ -1,0 +1,7 @@
+[client]
+showErrorDetails = false
+toolbarMode = "viewer"
+showSidebarNavigation = false
+
+[server]
+address = "localhost"
