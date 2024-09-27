@@ -7,3 +7,4 @@ xformers<0.0.27
 trl
 peft
 datasets==2.21.0
+tinydb
