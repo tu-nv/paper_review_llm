@@ -4,7 +4,7 @@ from database import db
 import hmac
 import copy
 from tempfile import NamedTemporaryFile
-from utils import paper_to_markdown_noms, model_res_generator, full_response_generator, SYSTEM_REVIEWER_PROMPT
+from utils import paper_to_markdown_noms, model_res_generator, full_response_generator, SYSTEM_REVIEWER_PROMPT, DISCLAMER
 
 st.set_page_config(
     page_title="Paper Review Assistant NOMS 2025",
@@ -28,8 +28,7 @@ md_text = None
 init_review_messages = None
 
 st.title("Paper review assistant")
-st.warning("This is a beta version of the paper review assistant for NOMS 2025 based on LLM. The system may not provide accurate results. Please only use the output as a suggestion.")
-
+st.warning("**Disclaimer**: This LLM-based system assists in reviewing academic papers but does not replace human judgment. Users should verify all suggestions for accuracy and ethical compliance. Use responsibly and adhere to academic standards.")
 uploaded_file = st.file_uploader("Upload a paper to start reviewing",
                                  type=["pdf"],
                                  on_change=reset_if_new_file_uploaded)

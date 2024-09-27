@@ -31,6 +31,22 @@ You are an journal paper reviewer. I give you an academic paper in markdown form
 Here is the paper:
 """
 
+DISCLAMER = """
+**DISCLAMER**: This system utilizes large language models (LLMs) to assist in reviewing academic papers. While LLMs can provide insights, generate suggestions, and highlight areas for improvement, the following warnings apply:
+
+- **Non-Substitution of Human Review**: This system is intended to complement human judgment, not replace it. Users should not rely solely on the AI for critical decisions. All suggestions should be reviewed by qualified experts.
+
+- **Potential for Inaccuracy**: LLMs may produce factually incorrect, outdated, or biased content, especially when dealing with emerging fields of research. Always cross-verify information provided by the system.
+
+- **Contextual Limitations**: The model may lack the specific domain knowledge required for highly specialized fields. Its responses are based on general patterns from a broad corpus and may not fully grasp nuanced academic arguments.
+
+- **Bias and Ethical Considerations**: LLMs may inadvertently reinforce biases present in the training data. It is the responsibility of the user to identify and mitigate any biases that may arise during the review process.
+
+- **AI Limitations in Ethical Judgments**: The system cannot make ethical judgments or handle issues like plagiarism detection. External tools and human oversight are required for these tasks.
+
+By using this system, you acknowledge that you understand its limitations and agree to use it responsibly in conjunction with human expertise.
+"""
+
 
 ollama_client = Client(host=OLLAMA_SERVER_URL, timeout=600)
 

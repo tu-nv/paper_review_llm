@@ -166,3 +166,4 @@ llama.cpp/
 model/
 _unsloth_sentencepiece_temp/
 .vscode
+noms_2024_dataset
