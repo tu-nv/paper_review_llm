@@ -9,11 +9,9 @@ from utils import paper_to_markdown_noms, model_res_generator, full_response_gen
 st.set_page_config(
     page_title="Paper Review Assistant NOMS 2025",
     page_icon="📝",
-    # layout="wide",
-    initial_sidebar_state="collapsed",
-    menu_items={
-        'About': "Paper review assistant for NOMS 2025",
-    }
+    # menu_items={
+    #     'About': "Paper review assistant for NOMS 2025",
+    # }
 )
 
 # initialize history

@@ -1,7 +1,13 @@
 [client]
 showErrorDetails = false
-toolbarMode = "viewer"
+toolbarMode = "minimal"
 showSidebarNavigation = false
 
 [server]
 address = "localhost"
+headless = true
+fileWatcherType = "none"
+runOnSave = false
+
+[browser]
+gatherUsageStats = false
