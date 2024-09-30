@@ -79,3 +79,4 @@ if uploaded_files is not None and len(uploaded_files) > 0:
             db.upsert_paper_review(paper_review)
             num_file_processed += 1
             file_processing_bar.progress(num_file_processed / num_files, text=f"Processing files... {num_file_processed}/{num_files}")
+    st.write("Finished.")

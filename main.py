@@ -3,6 +3,7 @@ import streamlit as st
 from database import db
 import hmac
 import copy
+import time
 from tempfile import NamedTemporaryFile
 from utils import paper_to_markdown_noms, model_res_generator, full_response_generator, SYSTEM_REVIEWER_PROMPT, DISCLAMER
 
@@ -45,6 +46,7 @@ if uploaded_file is not None:
                 # if not deepcopy, the original paper_review will be updated, and stored in db (cache, although not db.json yet)
                 # which can cause unwanted behavior
                 st.session_state["messages"] = copy.deepcopy(paper_review["review"])
+                time.sleep(4)
             else:
                 init_review_messages = [
                                 {'role': 'system', 'content': SYSTEM_REVIEWER_PROMPT},
